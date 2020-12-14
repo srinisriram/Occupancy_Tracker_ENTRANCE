@@ -93,11 +93,11 @@ class HumanTrackerHandler:
         """
         direction = trackable_object.centroids[-1][COLUMN] - trackable_object.centroids[0][COLUMN]
         if direction > 0:
-            #if abs(direction) > MIN_DIST_TRAVELED - 5:
             trackable_object.direction = Direction.ENTER
-        else:
-            #if abs(direction) > MIN_DIST_TRAVELED:
+        elif direction < 0:
             trackable_object.direction = Direction.EXIT
+        else:
+            pass
 
     @classmethod
     def record_movement(cls, trackable_object):

@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-MAX_OCCUPANCY = 250
+MAX_OCCUPANCY = 200
 SPEECH_FILENAME = 'speech2.wav'
 SERVER_PORT = 10000
 MAX_NUMBER_OF_RCV_BYTES = 1024
@@ -18,7 +18,7 @@ FRAME_WIDTH_IN_PIXELS = 400
 
 # Maximum consecutive frames a given object is allowed to be
 # marked as "disappeared" until we need to deregister the object from tracking.
-MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION = 20
+MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION = 18
 
 # Maximum distance between centroids to associate an object --
 # if the distance is larger than this maximum distance we'll
