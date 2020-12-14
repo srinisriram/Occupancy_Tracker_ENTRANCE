@@ -1,9 +1,9 @@
 # This file tests the send_receive_messages.py functionality.
 import unittest
 import threading
-from send_receive_messages import SendReceiveMessages
+from Occupancy_Tracker.send_receive_messages import SendReceiveMessages
 import time
-from logger import Logger
+from Occupancy_Tracker.logger import Logger
 import logging
 
 

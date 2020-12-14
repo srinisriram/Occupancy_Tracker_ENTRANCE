@@ -5,6 +5,7 @@ import logging
 import os
 import threading
 import time
+import sys, traceback
 from datetime import datetime
 
 
@@ -13,17 +14,18 @@ import imutils
 from imutils.video import FPS
 from imutils.video import VideoStream
 
-from centroid_object_creator import CentroidObjectCreator
+from Occupancy_Tracker.centroid_object_creator import CentroidObjectCreator
 # import the necessary packages
-from constants import PROTO_TEXT_FILE, MODEL_NAME, FRAME_WIDTH_IN_PIXELS, VIDEO_DEV_ID, \
-    SERVER_PORT, TIMEOUT_FOR_TRACKER, USE_PI_CAMERA, OPEN_DISPLAY, USE_RASPBERRY_PI, MAX_OCCUPANCY, START_TIME_HR, END_TIME_HR, HOURLY_CSV
-from email_sender import EmailSender
-from human_tracker_handler import HumanTrackerHandler
-from human_validator import HumanValidator
-from logger import Logger
-from send_receive_messages import SendReceiveMessages
-from singleton_template import Singleton
-from hr_send import Hour_email_send
+from Occupancy_Tracker.constants import PROTO_TEXT_FILE, MODEL_NAME, FRAME_WIDTH_IN_PIXELS, VIDEO_DEV_ID, \
+    SERVER_PORT, TIMEOUT_FOR_TRACKER, USE_PI_CAMERA, OPEN_DISPLAY, USE_RASPBERRY_PI, MAX_OCCUPANCY, START_TIME_HR, \
+    END_TIME_HR, HOURLY_CSV, Direction
+from Occupancy_Tracker.email_sender import EmailSender
+from Occupancy_Tracker.human_tracker_handler import HumanTrackerHandler
+from Occupancy_Tracker.human_validator import HumanValidator
+from Occupancy_Tracker.logger import Logger
+from Occupancy_Tracker.send_receive_messages import SendReceiveMessages
+from Occupancy_Tracker.singleton_template import Singleton
+from Occupancy_Tracker.hr_send import Hour_email_send
 
 
 class HumanDetector(metaclass=Singleton):
@@ -54,9 +56,8 @@ class HumanDetector(metaclass=Singleton):
         self.use_pi_camera = use_pi_camera
         self.open_display = open_display
         self.perform_human_detection = True
-
-        SendReceiveMessages().perform_job(peer_ip_address=self.args.peer_ip_address)
-
+        self.send_recv_msg_instance = SendReceiveMessages()
+        self.send_recv_msg_instance.perform_job(peer_ip_address=self.args.peer_ip_address)
         # Load Model
         self.load_model()
         # Initialize the camera.
@@ -177,25 +178,28 @@ class HumanDetector(metaclass=Singleton):
         if self.frame is None:
             if self.find_humans_from_video_file_name:
                 for _ in range(TIMEOUT_FOR_TRACKER + 1):
-                    HumanTrackerHandler.compute_direction_for_dangling_object_ids(keep_dict_items=True)
+                    HumanTrackerHandler.compute_direction_for_dangling_object_ids(self.send_recv_msg_instance, keep_dict_items=True)
                     time.sleep(1)
                 self.perform_human_detection = False
                 # break
             else:
                 HumanTrackerHandler.compute_direction_for_dangling_object_ids()
-                # continue
+            return
         self.set_frame_dimensions()
 
         objects = self.centroid_object_creator.create_centroid_tracker_object(self.H, self.W, self.rgb, self.net,
                                                                               self.frame)
         for speed_tracked_object, objectID, centroid in HumanTrackerHandler.yield_a_human_tracker_object(objects):
+            # Record direction.
             HumanTrackerHandler.record_movement(speed_tracked_object)
+            # Log or send email.
             HumanValidator.validate_column_movement(speed_tracked_object, self.current_time_stamp, self.frame,
-                                                    objectID)
+                                                    objectID, self.send_recv_msg_instance)
+
         if self.find_humans_from_video_file_name:
-            HumanTrackerHandler.compute_direction_for_dangling_object_ids(keep_dict_items=True)
+            HumanTrackerHandler.compute_direction_for_dangling_object_ids(self.send_recv_msg_instance, keep_dict_items=True)
         else:
-            HumanTrackerHandler.compute_direction_for_dangling_object_ids()
+            HumanTrackerHandler.compute_direction_for_dangling_object_ids(self.send_recv_msg_instance)
 
         # if the *display* flag is set, then display the current frame
         # to the screen and record if a user presses a key
@@ -217,7 +221,7 @@ class HumanDetector(metaclass=Singleton):
             Logger.logger().info("[INFO L 2]: {}".format(SendReceiveMessages().get_face_detected_count_locally()))
             Logger.logger().info("[INFO P 3]: {}".format(SendReceiveMessages().get_face_detected_by_peer()))
             Logger.logger().info(
-                "method_for_comparing_local_face_detected_and_global_face_detected: Compute total faces "
+                "get_and_print_total_face_count: Compute total faces "
                 "detected by both cameras: {}".format(SendReceiveMessages().get_total_face_detected_count()))
             within_hr_limit, current_hour = self.within_hour_range()
             if within_hr_limit:
@@ -255,6 +259,10 @@ class HumanDetector(metaclass=Singleton):
             except Exception as e:
                 Logger.logger().error("Caught an exception while looping over streams {}, rebooting....".format(
                     type(e).__name__ + ': ' + str(e)))
+                print("Exception in user code:")
+                print("-" * 60)
+                traceback.print_exc(file=sys.stdout)
+                print("-" * 60)
                 return_value = False
         return return_value
 

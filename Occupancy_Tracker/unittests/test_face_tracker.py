@@ -29,11 +29,11 @@ class TestFaceTracker(unittest.TestCase):
         human_detector_inst = HumanDetector(
             find_humans_from_video_file_name='videos/one_person_entering.mp4',
             use_pi_camera=False, open_display=True)
-        self.assertEqual(human_detector_inst.perform_job(), None)
+        self.assertEqual(human_detector_inst.thread_for_face_tracker(), True)
         human_centroid_dict = human_detector_inst.get_human_centroid_dict()
         self.assertEqual(len(human_centroid_dict), 1)
         self.assertEqual(human_centroid_dict[0].direction, Direction.ENTER)
-        self.assertEqual(SendReceiveMessages().get_face_detected_count_locally(), 1)
+        self.assertEqual(human_detector_inst.send_recv_msg_instance.get_face_detected_count_locally(), 1)
         human_detector_inst.clean_up()
         self.__cleanup()
 
@@ -45,13 +45,13 @@ class TestFaceTracker(unittest.TestCase):
         human_detector_inst = HumanDetector(
             find_humans_from_video_file_name='videos/two_persons_exiting.mp4',
             use_pi_camera=False, open_display=True)
-        self.assertEqual(human_detector_inst.perform_job(), None)
+        self.assertEqual(human_detector_inst.thread_for_face_tracker(), True)
         human_centroid_dict = human_detector_inst.get_human_centroid_dict()
         self.assertEqual(len(human_centroid_dict), 2)
         self.assertEqual(human_centroid_dict[0].direction, Direction.EXIT)
         self.assertEqual(human_centroid_dict[1].direction, Direction.EXIT)
-        self.assertEqual(SendReceiveMessages().get_face_detected_count_locally(), -2)
-        # human_detector_inst.clean_up()
+        self.assertEqual(human_detector_inst.send_recv_msg_instance.get_face_detected_count_locally(), -2)
+        human_detector_inst.clean_up()
         self.__cleanup()
 
     def test_three_persons_entering(self):
@@ -62,13 +62,13 @@ class TestFaceTracker(unittest.TestCase):
         human_detector_inst = HumanDetector(
             find_humans_from_video_file_name='videos/3_persons_entering.mp4',
             use_pi_camera=False, open_display=True)
-        self.assertEqual(human_detector_inst.perform_job(), None)
+        self.assertEqual(human_detector_inst.thread_for_face_tracker(), True)
         human_centroid_dict = human_detector_inst.get_human_centroid_dict()
         self.assertEqual(len(human_centroid_dict), 3)
         self.assertEqual(human_centroid_dict[0].direction, Direction.ENTER)
         self.assertEqual(human_centroid_dict[1].direction, Direction.ENTER)
         self.assertEqual(human_centroid_dict[2].direction, Direction.ENTER)
-        self.assertEqual(SendReceiveMessages().get_face_detected_count_locally(), 3)
+        self.assertEqual(human_detector_inst.send_recv_msg_instance.get_face_detected_count_locally(), 3)
         human_detector_inst.clean_up()
         self.__cleanup()
 
@@ -80,14 +80,14 @@ class TestFaceTracker(unittest.TestCase):
         human_detector_inst = HumanDetector(
             find_humans_from_video_file_name='videos/4_persons_entering.mov',
             use_pi_camera=False, open_display=True)
-        self.assertEqual(human_detector_inst.perform_job(), None)
+        self.assertEqual(human_detector_inst.thread_for_face_tracker(), True)
         human_centroid_dict = human_detector_inst.get_human_centroid_dict()
         self.assertEqual(len(human_centroid_dict), 4)
         self.assertEqual(human_centroid_dict[0].direction, Direction.ENTER)
         self.assertEqual(human_centroid_dict[1].direction, Direction.ENTER)
         self.assertEqual(human_centroid_dict[2].direction, Direction.ENTER)
         self.assertEqual(human_centroid_dict[3].direction, Direction.ENTER)
-        self.assertEqual(SendReceiveMessages().get_face_detected_count_locally(), 4)
+        self.assertEqual(human_detector_inst.send_recv_msg_instance.get_face_detected_count_locally(), 4)
         human_detector_inst.clean_up()
         self.__cleanup()
 
@@ -99,14 +99,14 @@ class TestFaceTracker(unittest.TestCase):
         human_detector_inst = HumanDetector(
             find_humans_from_video_file_name='videos/4_persons_exiting.mov',
             use_pi_camera=False, open_display=True)
-        self.assertEqual(human_detector_inst.perform_job(), None)
+        self.assertEqual(human_detector_inst.thread_for_face_tracker(), True)
         human_centroid_dict = human_detector_inst.get_human_centroid_dict()
         self.assertEqual(len(human_centroid_dict), 5)
         self.assertEqual(human_centroid_dict[0].direction, Direction.EXIT)
         self.assertEqual(human_centroid_dict[1].direction, Direction.EXIT)
         self.assertEqual(human_centroid_dict[2].direction, Direction.EXIT)
         self.assertEqual(human_centroid_dict[3].direction, Direction.EXIT)
-        self.assertEqual(SendReceiveMessages().get_face_detected_count_locally(), -5)
+        self.assertEqual(human_detector_inst.send_recv_msg_instance.get_face_detected_count_locally(), -5)
         human_detector_inst.clean_up()
         self.__cleanup()
 
@@ -118,14 +118,14 @@ class TestFaceTracker(unittest.TestCase):
         human_detector_inst = HumanDetector(
             find_humans_from_video_file_name='videos/TempleVideos/horizontal_line_4_Exiting.mp4',
             use_pi_camera=False, open_display=True)
-        self.assertEqual(human_detector_inst.perform_job(), None)
+        self.assertEqual(human_detector_inst.thread_for_face_tracker(), True)
         human_centroid_dict = human_detector_inst.get_human_centroid_dict()
         self.assertEqual(len(human_centroid_dict), 4)
         self.assertEqual(human_centroid_dict[0].direction, Direction.EXIT)
         self.assertEqual(human_centroid_dict[1].direction, Direction.EXIT)
         self.assertEqual(human_centroid_dict[2].direction, Direction.EXIT)
         self.assertEqual(human_centroid_dict[3].direction, Direction.EXIT)
-        self.assertEqual(SendReceiveMessages().get_face_detected_count_locally(), -4)
+        self.assertEqual(human_detector_inst.send_recv_msg_instance.get_face_detected_count_locally(), -4)
         human_detector_inst.clean_up()
         self.__cleanup()
 
@@ -137,14 +137,14 @@ class TestFaceTracker(unittest.TestCase):
         human_detector_inst = HumanDetector(
             find_humans_from_video_file_name='videos/TempleVideos/horizontal_line_4_Entering.mp4',
             use_pi_camera=False, open_display=True)
-        self.assertEqual(human_detector_inst.perform_job(), None)
+        self.assertEqual(human_detector_inst.thread_for_face_tracker(), True)
         human_centroid_dict = human_detector_inst.get_human_centroid_dict()
         self.assertEqual(len(human_centroid_dict), 4)
         self.assertEqual(human_centroid_dict[0].direction, Direction.ENTER)
         self.assertEqual(human_centroid_dict[1].direction, Direction.ENTER)
         self.assertEqual(human_centroid_dict[2].direction, Direction.ENTER)
         self.assertEqual(human_centroid_dict[3].direction, Direction.ENTER)
-        self.assertEqual(SendReceiveMessages().get_face_detected_count_locally(), 4)
+        self.assertEqual(human_detector_inst.send_recv_msg_instance.get_face_detected_count_locally(), 4)
         human_detector_inst.clean_up()
         self.__cleanup()
 
@@ -156,14 +156,14 @@ class TestFaceTracker(unittest.TestCase):
         human_detector_inst = HumanDetector(
             find_humans_from_video_file_name='videos/TempleVideos/vertical_line_Exiting.mp4',
             use_pi_camera=False, open_display=True)
-        self.assertEqual(human_detector_inst.perform_job(), None)
+        self.assertEqual(human_detector_inst.thread_for_face_tracker(), True)
         human_centroid_dict = human_detector_inst.get_human_centroid_dict()
         self.assertEqual(len(human_centroid_dict), 4)
         self.assertEqual(human_centroid_dict[0].direction, Direction.EXIT)
         self.assertEqual(human_centroid_dict[1].direction, Direction.EXIT)
         self.assertEqual(human_centroid_dict[2].direction, Direction.EXIT)
         self.assertEqual(human_centroid_dict[3].direction, Direction.EXIT)
-        self.assertEqual(SendReceiveMessages().get_face_detected_count_locally(), -4)
+        self.assertEqual(human_detector_inst.send_recv_msg_instance.get_face_detected_count_locally(), -4)
         human_detector_inst.clean_up()
         self.__cleanup()
 

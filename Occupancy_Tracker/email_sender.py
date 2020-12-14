@@ -8,11 +8,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
 
-from constants import ENTER_LOG_FILE_NAME, PEER_ENTER_LOG_FILE_NAME, EXIT_LOG_FILE_NAME, \
+from Occupancy_Tracker.constants import ENTER_LOG_FILE_NAME, PEER_ENTER_LOG_FILE_NAME, EXIT_LOG_FILE_NAME, \
     PEER_EXIT_LOG_FILE_NAME, \
     WEEKLY_LOG_FILE_NAME, MONTHLY_LOG_FILE_NAME, DAY, DATE, CLEAR_FILES, MERGE_FILES, MERGED_EXIT_CSV, MERGED_ENTER_CSV, \
     HOURLY_CSV
-from logger import Logger
+from Occupancy_Tracker.logger import Logger
 
 
 class EmailSender:

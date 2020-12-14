@@ -1,7 +1,7 @@
 # This file is used to test the playing audio functionality.
 
 import unittest
-from play_audio import PlayAudio
+from Occupancy_Tracker.play_audio import PlayAudio
 
 
 class TestPlayAudio(unittest.TestCase):
