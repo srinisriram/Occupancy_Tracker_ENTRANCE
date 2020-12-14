@@ -18,7 +18,7 @@ FRAME_WIDTH_IN_PIXELS = 400
 
 # Maximum consecutive frames a given object is allowed to be
 # marked as "disappeared" until we need to deregister the object from tracking.
-MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION = 10
+MAX_NUM_OF_CONSECUTIVE_FRAMES_FOR_ACTION = 20
 
 # Maximum distance between centroids to associate an object --
 # if the distance is larger than this maximum distance we'll
